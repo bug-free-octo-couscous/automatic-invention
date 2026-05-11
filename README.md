@@ -1,1 +1,1 @@
-make something using haskell
+try make blockchain using haskell
