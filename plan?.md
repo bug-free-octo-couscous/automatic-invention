@@ -1,32 +1,3 @@
-Good read on both files. Here's a comprehensive breakdown of what to improve to bring this to production level, organized by priority:
-
----
-
-## 🔴 Critical Issues
-
-### 1. `last` / `++` on lists — use `Data.Sequence` or a proper chain structure
-`last chain` is O(n) and `chain ++ [newBlock]` is O(n). A production chain should use a **finger tree** (`Data.Sequence`) or store the tip separately.
-
-```haskell
-data Blockchain = Blockchain
-  { chainBlocks :: Seq Block
-  , chainTip    :: Block   -- O(1) access to latest
-  }
-```
-
-### 2. Mining is single-threaded and blocks the main thread
-`mineBlock` is a tight pure loop with no concurrency. Use `async` + `STM` so mining can be cancelled, parallelised, or interrupted by a new block from the network.
-
-```haskell
-import Control.Concurrent.Async (race)
-import Control.Concurrent.STM
-```
-
-### 3. `difficulty` is a global constant — should be dynamic
-Real chains do **difficulty retargeting** based on average block time. At minimum, pass it as a parameter through your monad stack rather than a top-level constant.
-
----
-
 ## 🟠 Security / Correctness
 
 ### 4. Hash input is unstructured string concatenation
@@ -63,7 +34,7 @@ addBlock :: Blockchain -> String -> ExceptT BlockchainError IO Blockchain
 data BlockchainError = EmptyChain | InvalidParent | HashMismatch
 ```
 
-### 9. No persistence
+### 9. No persistence - do it later
 Blocks live only in memory. Add serialisation (`aeson` or `binary`) and write to disk or a database (`sqlite-simple`, `postgresql-simple`).
 
 ### 10. No networking layer

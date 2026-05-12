@@ -11,7 +11,7 @@ cabal-version:      3.0
 --   http://haskell.org/cabal/users-guide/
 --
 -- The name of the package.
-name:               automatic-invention
+name:               haskell-blockchain
 
 -- The package version.
 -- See the Haskell package versioning policy (PVP) for standards
@@ -72,7 +72,10 @@ executable automatic-invention
                       bytestring,
                       base16-bytestring,
                       time,
-                      aeson
+                      aeson,
+                      containers >= 0.8,
+                      stm >= 2.5,
+                      async >= 2.2
 
     -- Directories containing source files.
     hs-source-dirs:   src
